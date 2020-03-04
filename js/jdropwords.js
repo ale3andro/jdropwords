@@ -13,9 +13,9 @@ jQuery.fn.jDropWords = function(options) {
     submitAjaxUrl : "",
     submitAjaxExtraParams : {},
     feedbacks : {
-      50 : "Low score, please try again.",
-      80 : "Not perfect, but good.",
-      100 : "Bravo ! You nailed it."
+      50 : "Δοκίμασε ξανά..",
+      80 : "Αρκετά καλή προσπάθεια!",
+      100 : "Εξαιρετικά!"
     },
     answers : null
   };

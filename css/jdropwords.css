@@ -2,7 +2,7 @@
     position: relative;
     margin: auto;
     width: 600px;
-    font-size: 12px;
+    font-size: 18px;
     font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
@@ -62,6 +62,8 @@
 }
 .jdropwords .words .word {
     padding: 3px 10px 3px 10px;
+    margin-right: 10px;
+    margin-top: 5px;
 }
 
 .jdropwords .blanks p .dropped span,
