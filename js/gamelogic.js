@@ -53,7 +53,7 @@ $( document ).ready(function() {
             
             var answers = {}; 
             for (var i=0; i<sentences.length; i++) {
-                $('#alx_sentences').append("<p>" + sentences[i].replace("***", "<span class=\"blank\" id=\"gap_" + ids[i] + "\"></span>") + "</p>");
+                $('#alx_sentences').append("<p>" + (i+1) +". " + sentences[i].replace("***", "<span class=\"blank\" id=\"gap_" + ids[i] + "\"></span>") + "</p>");
                 $("#alx_words").append("<li class=\"word\" id=\"word_" + ids[i] + "\">" + words[i] + "</li>");                 
                 answers["gap_" + ids[i]] = 'word_' + ids[i];
             }
