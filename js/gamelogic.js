@@ -45,6 +45,7 @@ $( document ).ready(function() {
             title = data['metadata']['title'];
             subtitle = data['metadata']['subtitle'];
             document.title = title;
+            $("#alx_subtitle").html(subtitle);
             $.each(data['sentences'], function(index, value) {
                 sentences.push(value['sentence']);
                 words.push(value['missing_word']);
