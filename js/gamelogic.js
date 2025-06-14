@@ -35,44 +35,74 @@ $.fn.shuffleChildren = function() {
 
 
 $( document ).ready(function() {
+    $(".nodrag").on("dragstart", function() {
+        return false; // Prevents dragging
+    });
     sentences = [];
     words = [];
     ids = [];
     var answers = new Object();
-    var a1 = getUrlParams('id');
-    if ( (a1.length>0) && (a1!='not available') ) {
-        var jqxhr = $.getJSON("activities/" + a1 + ".json", function(data) {
-            title = data['metadata']['title'];
-            subtitle = data['metadata']['subtitle'];
-            document.title = title;
-            $("#alx_subtitle").html(subtitle);
-            $.each(data['sentences'], function(index, value) {
-                sentences.push(value['sentence']);
-                words.push(value['missing_word']);
-                ids.push(Math.random().toString(36));
-            });
-            
-            var answers = {}; 
-            for (var i=0; i<sentences.length; i++) {
-                $('#alx_sentences').append("<p>" + (i+1) +". " + sentences[i].replace("***", "<span class=\"blank\" id=\"gap_" + ids[i] + "\"></span>") + "</p>");
-                $("#alx_words").append("<li class=\"word\" id=\"word_" + ids[i] + "\">" + words[i] + "</li>");                 
-                answers["gap_" + ids[i]] = 'word_' + ids[i];
-            }
-            $("#alx_words").shuffleChildren();
-            $(function(){
-                $('.jdropwords').jDropWords({
-                    answers : answers
-                });
-            });
-           
-        })
-        .fail(function() {
-            $('#alx_sentences').append("<p>Δεν βρέθηκε δραστηριότητα με αυτό το id</p>");
-            $('.actions').hide();
+    if (!('id' in getUrlParams())) {
+        $.ajax(
+        {   url: "activities/all_activities",
+            type: "GET",
+            dataType: "text",
+            success: function(result) {
+                $('#alx_sentences').html('Διαθέσιμες δραστηριότητες');
+
+                $('#alx_words').html('');
+                $('.nodrag').hide();
+                
+                console.log(result);
+                var alldata = result.split('\n');
+                for (var i=0; i<alldata.length; i+=3) {
+                    activity_id = alldata[i].split(".")[0];
+                    if (alldata[i]!='') {
+                        activity_title = alldata[i+1].substring(1, alldata[i+1].length-1);
+                        activity_class = alldata[i+2].substring(1, alldata[i+2].length-1);
+                        let url = 'Τάξη: ' + activity_class + ' | '  + activity_title + ' | <a href="?id=' + activity_id + '">εδώ</a>.<br />';
+                        $('#alx_words').html( $('#alx_words').html() + url);
+                        console.log(url);
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#alx_sentences').append("<p>Δεν βρέθηκε δραστηριότητα με αυτό το id</p>");
+                $('.actions').hide();
+            } 
         });
-    }
-    else {
-        $('#alx_sentences').append("<p>Δεν ορίστηκε το id της δραστηριότητας</p>");
-        $('.actions').hide();
-    }      
+    } else {
+        $.ajax(
+            {   url: "activities/" + getUrlParams('id') + ".json",
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    title = data['metadata']['title'];
+                    subtitle = data['metadata']['subtitle'];
+                    document.title = title;
+                    $("#alx_subtitle").html(subtitle);
+                    $.each(data['sentences'], function(index, value) {
+                        sentences.push(value['sentence']);
+                        words.push(value['missing_word']);
+                        ids.push(Math.random().toString(36));
+                    });
+                    
+                    var answers = {}; 
+                    for (var i=0; i<sentences.length; i++) {
+                        $('#alx_sentences').append("<p>" + (i+1) +". " + sentences[i].replace("***", "<span class=\"blank\" id=\"gap_" + ids[i] + "\"></span>") + "</p>");
+                        $("#alx_words").append("<li class=\"word\" id=\"word_" + ids[i] + "\">" + words[i] + "</li>");                 
+                        answers["gap_" + ids[i]] = 'word_' + ids[i];
+                    }
+                    $("#alx_words").shuffleChildren();
+                    $(function(){
+                        $('.jdropwords').jDropWords({
+                            answers : answers
+                        });
+                    });
+                },
+                error: function(xhr, status, error) {
+                    window.location.href = "http://sxoleio.pw/alx_code/jdropwords/";
+                } 
+        });
+    }  
 });
